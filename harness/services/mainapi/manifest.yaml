@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: { { .Values.namespace } }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{lower .Values.name}}-deployment"
+  namespace: { { .Values.namespace } }
+  labels:
+    app: { { lower .Values.name } }
+spec:
+  replicas: { { .Values.replicas } }
+  selector:
+    matchLabels:
+      app: { { lower .Values.name } }
+  template:
+    metadata:
+      labels:
+        app: { { lower .Values.name } }
+    spec:
+      containers:
+        - name: { { lower .Values.name } }
+          image: { { .Values.image } }
+          ports:
+            - containerPort: { { .Values.serviceTargetPort } }
+          env:
+            - name: PORT
+              value: { { .Values.serviceTargetPort } }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{lower .Values.name}}-svc"
+  namespace: { { .Values.namespace } }
+  annotations:
+    harness.io/primary-service: "true"
+spec:
+  type: { { .Values.serviceType } }
+  selector:
+    app: { { lower .Values.name } }
+  ports:
+    - name: http
+      port: { { .Values.servicePort } }
+      targetPort: { { .Values.serviceTargetPort } }

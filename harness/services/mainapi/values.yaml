@@ -1,0 +1,11 @@
+namespace: <+infra.namespace>
+name: <+service.name.replace(" ", "")>
+replicas: 3
+image: <+artifact.image>
+serviceType: LoadBalancer
+servicePort: 8080
+serviceTargetPort: 8080
+createNamespace: true
+service_identifier: <+service.identifier>
+env_identifier: <+env.identifier>
+dockercfg: <+artifact.imagePullSecret>
